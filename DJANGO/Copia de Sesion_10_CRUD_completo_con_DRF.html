@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sesión 10 — CRUD completo con DRF</title>
+<style>
+  body { font-family: Calibri, 'Segoe UI', Arial, sans-serif; color: #222; max-width: 900px; margin: 30px auto; padding: 0 20px; line-height: 1.5; }
+  .banner { background-color: #1f4e79; color: #fff; padding: 18px 22px; border-radius: 6px; }
+  .banner h1 { margin: 0; font-size: 22px; }
+  .subtitle { font-style: italic; color: #2c5aa0; margin: 10px 2px 22px; font-size: 14px; }
+  table.infotable { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 14px; }
+  table.infotable td { border: 1px solid #bbc9d9; padding: 8px 10px; }
+  table.infotable td.label { background-color: #dce6f2; font-weight: bold; width: 12%; }
+  table.sessiontable { width: 100%; border-collapse: collapse; margin-bottom: 26px; font-size: 12.5px; }
+  table.sessiontable th { background-color: #1f4e79; color: #fff; padding: 8px 6px; }
+  table.sessiontable td { border: 1px solid #ccc; padding: 8px 6px; vertical-align: top; }
+  table.sessiontable td.tema { font-weight: bold; color: #b5651d; font-style: italic; }
+  .section-header { background-color: #b5651d; color: #fff; font-weight: bold; font-size: 15px; padding: 9px 14px; border-radius: 3px; margin: 30px 0 12px; }
+  .callout-key { border-left: 4px solid #4caf50; background-color: #eaf7ea; padding: 10px 14px; margin: 15px 0; }
+  .callout-error { border-left: 4px solid #e08a3c; background-color: #fdf1e3; padding: 10px 14px; margin: 15px 0; }
+  pre { background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 13px; line-height: 1.5; }
+  code { font-family: Consolas, 'Courier New', monospace; background-color: #eee; padding: 2px 5px; border-radius: 3px; color: #a6350f; }
+  pre code { background: none; padding: 0; color: inherit; }
+  table.simple { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+  table.simple th, table.simple td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.simple th { background-color: #f0f0f0; }
+  table.errores td.mark { color: #c0392b; font-weight: bold; width: 4%; }
+  table.checklist td.mark { width: 4%; font-size: 16px; }
+  ol, ul { padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .footer-note { font-style: italic; color: #666; border-top: 1px solid #ddd; padding-top: 12px; margin-top: 34px; font-size: 13.5px; }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <h1>SESIÓN DE CLASE — Django REST Framework + API (FastAPI) + Proyecto Integrador</h1>
+</div>
+<div class="subtitle">Sesión N° 10 — 21 Octubre de 2026 (Miércoles) — Bloque 1: Django REST Framework</div>
+
+<table class="infotable">
+  <tr><td class="label">Instructor</td><td>César Augusto Moreno Mena</td><td class="label">Centro</td><td>CESGE</td></tr>
+  <tr><td class="label">Curso</td><td>Django REST Framework + API (FastAPI) + Proyecto Integrador</td><td class="label">Año</td><td>2026</td></tr>
+</table>
+
+<table class="sessiontable">
+<tr><th>N°</th><th>Fecha</th><th>Día</th><th>Semana</th><th>Bloque</th><th>Tema de la sesión</th><th>Teoría</th><th>Ejemplo</th><th>Práctica</th></tr>
+<tr>
+  <td>10</td><td>21 Octubre</td><td>Miércoles</td><td>S4</td><td>Bloque 1: Django REST Framework</td>
+  <td class="tema">CRUD completo con DRF</td>
+  <td>Integración de serializers, vistas y routers para un CRUD completo y consistente.</td>
+  <td>Prueba end-to-end del CRUD completo del recurso principal usando la documentación interactiva.</td>
+  <td>Finalización del CRUD completo de todos los recursos del proyecto.</td>
+</tr>
+</table>
+
+<div class="section-header">1. Objetivo de la sesión</div>
+<p>Al finalizar esta sesión, el aprendiz tendrá un <strong>CRUD completo, coherente y probado de punta a punta</strong> para todos los recursos principales de su proyecto, integrando serializers (sesión 6), ViewSets/Routers (sesión 7) y, donde haga falta, APIView/Generic Views (sesión 9).</p>
+
+<div class="section-header">2. ¿Qué significa un CRUD "completo y consistente"?</div>
+<p>No basta con que cada operación individual funcione: un CRUD completo también debe ser <strong>consistente</strong> en sus respuestas. Eso significa:</p>
+<table class="simple">
+<tr><th>Aspecto</th><th>Qué revisar</th></tr>
+<tr><td>Códigos de estado</td><td>201 al crear, 200 al listar/actualizar, 204 al borrar, 400 ante datos inválidos, 404 si el recurso no existe.</td></tr>
+<tr><td>Formato de errores</td><td>Los errores de validación deben llegar como JSON legible (<code>serializer.errors</code>), no como una página de error HTML de Django.</td></tr>
+<tr><td>Relaciones</td><td>Los campos de relación (ForeignKey) deben mostrar información útil (ej. el nombre, no solo el ID) sin romper la creación/actualización.</td></tr>
+<tr><td>Orden y filtros básicos</td><td>Los listados deben tener un orden predecible (<code>order_by</code>) aunque sea simple, antes de agregar filtros avanzados en la sesión 13.</td></tr>
+</table>
+<div class="callout-key">
+  💡 <strong>Idea clave</strong><br>
+  Un endpoint que "funciona" en el caso feliz pero devuelve un error 500 crudo ante datos inválidos no está terminado. Probar el camino del error es tan importante como probar el camino exitoso.
+</div>
+
+<div class="section-header">3. Ejemplo guiado: revisión end-to-end del CRUD de Biblioteca</div>
+<p>Retomando el proyecto "Biblioteca", vamos a probarlo de punta a punta usando la documentación interactiva (Browsable API) en <code>/biblioteca/libros/</code>:</p>
+<pre><code># 1) Listar (GET) — debe responder 200 con un array JSON
+GET /biblioteca/libros/
+
+# 2) Crear (POST) con datos válidos — debe responder 201
+POST /biblioteca/libros/
+{
+    "titulo": "El túnel",
+    "autor": 1,
+    "precio": 38000,
+    "disponible": true
+}
+
+# 3) Crear (POST) con datos inválidos — debe responder 400, no 500
+POST /biblioteca/libros/
+{
+    "titulo": "",
+    "autor": 1,
+    "precio": -100
+}
+
+# 4) Ver detalle (GET) — debe responder 200 o 404 si no existe
+GET /biblioteca/libros/99/
+
+# 5) Actualizar parcial (PATCH) — debe responder 200
+PATCH /biblioteca/libros/1/
+{ "disponible": false }
+
+# 6) Borrar (DELETE) — debe responder 204 sin contenido
+DELETE /biblioteca/libros/1/</code></pre>
+<p>Si el paso 3 devuelve un error 500 en lugar de 400, revisa que el serializer tenga las validaciones de la sesión 6 y que la vista use <code>ModelViewSet</code> o llame <code>is_valid(raise_exception=True)</code> correctamente.</p>
+<p><strong>Consistencia en las relaciones:</strong> confirma que <code>LibroSerializer</code> siga exponiendo tanto <code>autor</code> (el ID, necesario para crear/actualizar) como <code>autor_nombre</code> (de solo lectura, útil para mostrar), como quedó definido en la sesión 6.</p>
+
+<div class="section-header">4. Ejercicio práctico (para hacer en clase)</div>
+<ol>
+  <li>Ejecuta manualmente, sobre cada recurso principal de tu proyecto, la secuencia completa: listar, crear válido, crear inválido, detalle, actualización parcial y borrado.</li>
+  <li>Anota el código de estado HTTP que devolvió cada paso y compáralo con la tabla de la sección 2.</li>
+  <li>Si algún paso no devuelve el código esperado, corrige el serializer o la vista correspondiente.</li>
+  <li>Agrega un <code>order_by()</code> razonable al queryset de cada listado si todavía no lo tiene.</li>
+  <li>Verifica que los campos de relación (ForeignKey) muestren tanto el ID como un campo legible de solo lectura.</li>
+  <li>Documenta en un archivo <code>README.md</code> de tu proyecto la lista de endpoints disponibles y qué método/código de estado espera cada uno.</li>
+</ol>
+
+<div class="section-header">5. Errores comunes</div>
+<table class="simple errores">
+<tr><td class="mark">✗</td><td>Un POST con datos inválidos devuelve error 500 en lugar de 400 → normalmente falta una validación en el serializer o se está usando una vista manual sin manejar <code>is_valid()</code> correctamente.</td></tr>
+<tr><td class="mark">✗</td><td>Un DELETE exitoso devuelve un cuerpo JSON en lugar de una respuesta vacía con 204 → suele pasar al sobreescribir <code>destroy()</code> sin llamar al comportamiento original.</td></tr>
+<tr><td class="mark">✗</td><td>Los listados no tienen orden definido → los resultados cambian de posición entre una petición y otra, dificultando las pruebas.</td></tr>
+<tr><td class="mark">✗</td><td>Exponer solo el ID de una relación sin ningún campo legible → el cliente de la API tiene que hacer peticiones adicionales para mostrar información básica.</td></tr>
+</table>
+
+<div class="section-header">6. Resumen de la sesión (checklist de aprendizaje)</div>
+<table class="simple checklist">
+<tr><td class="mark">☐</td><td>Mi CRUD responde con los códigos de estado correctos en los casos exitosos y en los casos de error.</td></tr>
+<tr><td class="mark">☐</td><td>Los errores de validación llegan como JSON legible, no como error 500.</td></tr>
+<tr><td class="mark">☐</td><td>Mis listados tienen un orden definido con <code>order_by()</code>.</td></tr>
+<tr><td class="mark">☐</td><td>Mis relaciones muestran información legible además del ID.</td></tr>
+<tr><td class="mark">☐</td><td>Tengo documentados los endpoints de mi proyecto en un README.</td></tr>
+</table>
+
+<div class="footer-note">Próxima sesión (22 de octubre): protegeremos estos endpoints con <strong>Autenticación y permisos en DRF</strong>, para que no cualquiera pueda crear, editar o borrar datos.</div>
+
+</body>
+</html>

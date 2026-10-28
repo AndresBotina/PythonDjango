@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sesión 12 — Repaso y práctica integradora</title>
+<style>
+  body { font-family: Calibri, 'Segoe UI', Arial, sans-serif; color: #222; max-width: 900px; margin: 30px auto; padding: 0 20px; line-height: 1.5; }
+  .banner { background-color: #1f4e79; color: #fff; padding: 18px 22px; border-radius: 6px; }
+  .banner h1 { margin: 0; font-size: 22px; }
+  .subtitle { font-style: italic; color: #2c5aa0; margin: 10px 2px 22px; font-size: 14px; }
+  table.infotable { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 14px; }
+  table.infotable td { border: 1px solid #bbc9d9; padding: 8px 10px; }
+  table.infotable td.label { background-color: #dce6f2; font-weight: bold; width: 12%; }
+  table.sessiontable { width: 100%; border-collapse: collapse; margin-bottom: 26px; font-size: 12.5px; }
+  table.sessiontable th { background-color: #1f4e79; color: #fff; padding: 8px 6px; }
+  table.sessiontable td { border: 1px solid #ccc; padding: 8px 6px; vertical-align: top; }
+  table.sessiontable td.tema { font-weight: bold; font-style: italic; color: #4a4a4a; }
+  .section-header { background-color: #52585e; color: #fff; font-weight: bold; font-size: 15px; padding: 9px 14px; border-radius: 3px; margin: 30px 0 12px; }
+  .callout-key { border-left: 4px solid #4caf50; background-color: #eaf7ea; padding: 10px 14px; margin: 15px 0; }
+  .callout-error { border-left: 4px solid #e08a3c; background-color: #fdf1e3; padding: 10px 14px; margin: 15px 0; }
+  pre { background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 13px; line-height: 1.5; }
+  code { font-family: Consolas, 'Courier New', monospace; background-color: #eee; padding: 2px 5px; border-radius: 3px; color: #a6350f; }
+  pre code { background: none; padding: 0; color: inherit; }
+  table.simple { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+  table.simple th, table.simple td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.simple th { background-color: #f0f0f0; }
+  table.check td.mark { width: 4%; text-align: center; }
+  ol, ul { padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .footer-note { font-style: italic; color: #666; border-top: 1px solid #ddd; padding-top: 12px; margin-top: 34px; font-size: 13.5px; }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <h1>SESIÓN DE CLASE — Django REST Framework + API (FastAPI) + Proyecto Integrador</h1>
+</div>
+<div class="subtitle">Sesión N° 12 — 23 Octubre de 2026 (Viernes) — Bloque 1: Django REST Framework</div>
+
+<table class="infotable">
+  <tr><td class="label">Instructor</td><td>César Augusto Moreno Mena</td><td class="label">Centro</td><td>CESGE</td></tr>
+  <tr><td class="label">Curso</td><td>Django REST Framework + API (FastAPI) + Proyecto Integrador</td><td class="label">Año</td><td>2026</td></tr>
+</table>
+
+<table class="sessiontable">
+<tr><th>N°</th><th>Fecha</th><th>Día</th><th>Semana</th><th>Bloque</th><th>Tema de la sesión</th><th>Teoría</th><th>Ejemplo</th><th>Práctica</th></tr>
+<tr>
+  <td>12</td><td>23 Octubre</td><td>Viernes</td><td>S4</td><td>Bloque 1: Django REST Framework</td>
+  <td class="tema">Repaso y práctica integradora</td>
+  <td>Sesión de consolidación de los temas vistos en las sesiones anteriores de Django REST Framework: APIView y Generic Views, CRUD completo con DRF, Autenticación y permisos en DRF.</td>
+  <td>Revisión guiada en vivo de los ejercicios y avances entregados por los aprendices.</td>
+  <td>Los aprendices resuelven ejercicios adicionales de refuerzo y avanzan en su proyecto personal.</td>
+</tr>
+</table>
+
+<div class="section-header">1. Objetivo de la sesión</div>
+<p>Esta es una sesión de <strong>repaso y práctica integradora</strong>. El objetivo es que el aprendiz <strong>consolide</strong> en su proyecto los tres temas vistos este bloque: <em>APIView y Generic Views</em> (19 de octubre), <em>CRUD completo con DRF</em> (21 de octubre) y <em>Autenticación y permisos en DRF</em> (22 de octubre), dejando su API protegida y probada de punta a punta.</p>
+
+<div class="section-header">2. Repaso rápido de conceptos clave</div>
+<p><strong>Sesión 9 (19 oct) — APIView y Generic Views</strong></p>
+<table class="simple">
+<tr><td>✓</td><td><code>APIView</code> da control total: cada verbo HTTP se implementa como un método (<code>get</code>, <code>post</code>, etc.).</td></tr>
+<tr><td>✓</td><td>Las <strong>Generic Views</strong> (<code>ListCreateAPIView</code>, <code>RetrieveUpdateDestroyAPIView</code>) resuelven lo común y permiten personalizar con <code>get_queryset()</code>.</td></tr>
+</table>
+<p><strong>Sesión 10 (21 oct) — CRUD completo con DRF</strong></p>
+<table class="simple">
+<tr><td>✓</td><td>Un CRUD completo debe devolver los códigos de estado correctos: 200, 201, 204, 400, 404.</td></tr>
+<tr><td>✓</td><td>Los listados deben tener orden predecible y las relaciones deben mostrar información legible, no solo el ID.</td></tr>
+</table>
+<p><strong>Sesión 11 (22 oct) — Autenticación y permisos</strong></p>
+<table class="simple">
+<tr><td>✓</td><td>Autenticación responde "¿quién eres?"; permisos responden "¿qué puedes hacer?".</td></tr>
+<tr><td>✓</td><td>JWT (SimpleJWT) se envía como <code>Authorization: Bearer &lt;token&gt;</code>.</td></tr>
+<tr><td>✓</td><td><code>IsAuthenticatedOrReadOnly</code> permite lectura pública y escritura solo a usuarios autenticados; los permisos personalizados heredan de <code>BasePermission</code>.</td></tr>
+</table>
+
+<div class="section-header">3. Autoevaluación: ¿qué tan seguro te sientes?</div>
+<ol>
+  <li>¿Sé cuándo usar APIView y cuándo una Generic View?</li>
+  <li>¿Mi CRUD responde con los códigos de estado correctos también en los casos de error?</li>
+  <li>¿Sé obtener un token JWT y usarlo en una petición protegida?</li>
+  <li>¿Sé la diferencia entre un permiso estándar y uno personalizado?</li>
+  <li>Si un endpoint responde 401 en lugar de 200, ¿sé qué revisar primero (token, encabezado, configuración de permisos)?</li>
+</ol>
+<p><em>Si respondiste "no" a alguna pregunta, aprovecha el espacio de dudas de hoy antes de avanzar al ejercicio integrador.</em></p>
+
+<div class="section-header">4. Ejercicio integrador paso a paso</div>
+<p>Vamos a dejar la API de "Biblioteca" protegida y verificada de punta a punta.</p>
+<p><strong>Paso 1: Autenticación JWT (repaso sesión 11)</strong></p>
+<pre><code>pip install djangorestframework-simplejwt</code></pre>
+<pre><code>REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_simplejwt.authentication.JWTAuthentication'],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+}</code></pre>
+<pre><code>from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+urlpatterns = [
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+]</code></pre>
+<p><strong>Paso 2: Verificación end-to-end (repaso sesión 10)</strong> — sin token:</p>
+<pre><code>GET /biblioteca/libros/          -&gt; 200 (lectura pública)
+POST /biblioteca/libros/         -&gt; 401 (requiere autenticación)</code></pre>
+<p>Con token obtenido en <code>/api/token/</code>:</p>
+<pre><code>POST /biblioteca/libros/
+Authorization: Bearer &lt;access_token&gt;
+{ "titulo": "Ficciones", "autor": 1, "precio": 42000, "disponible": true }
+-&gt; 201</code></pre>
+<p><strong>Paso 3: APIView personalizado (repaso sesión 9)</strong> — agrega un endpoint de solo lectura pública que no dependa del permiso global:</p>
+<pre><code>from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from .models import Libro
+from .serializers import LibroSerializer
+
+class LibroDisponibleAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        libros = Libro.objects.filter(disponible=True)
+        return Response(LibroSerializer(libros, many=True).data)</code></pre>
+
+<div class="section-header">5. Errores comunes del bloque (repaso general)</div>
+<table class="simple">
+<tr><td>✗</td><td>Configurar <code>IsAuthenticated</code> global y olvidar que bloquea también los endpoints que deberían ser públicos.</td></tr>
+<tr><td>✗</td><td>Enviar el token sin el prefijo <code>Bearer</code> → 401 aunque el token sea válido.</td></tr>
+<tr><td>✗</td><td>Un POST con datos inválidos devuelve 500 en lugar de 400.</td></tr>
+<tr><td>✗</td><td>Olvidar <code>.as_view()</code> al conectar un APIView en <code>urls.py</code>.</td></tr>
+</table>
+
+<div class="section-header">6. Espacio de dudas y retroalimentación</div>
+<p>Este es el momento de la sesión para plantear al instructor cualquier duda pendiente del bloque sobre APIView, Generic Views, CRUD completo, autenticación o permisos. Trae tu proyecto personal abierto para revisión en vivo.</p>
+
+<div class="section-header">7. Checklist final del bloque (Sesiones 9–11)</div>
+<table class="simple check">
+<tr><td class="mark">☐</td><td>Mi API distingue endpoints públicos de endpoints protegidos.</td></tr>
+<tr><td class="mark">☐</td><td>Puedo obtener y usar un token JWT correctamente.</td></tr>
+<tr><td class="mark">☐</td><td>Mi CRUD responde con los códigos de estado correctos ante éxito y error.</td></tr>
+<tr><td class="mark">☐</td><td>Tengo al menos un permiso personalizado o una regla de negocio implementada con APIView.</td></tr>
+<tr><td class="mark">☐</td><td>Puedo explicar la diferencia entre autenticación y permisos con mis propias palabras.</td></tr>
+</table>
+
+<div class="footer-note">Próxima sesión (26 de octubre): <strong>Paginación, filtros y búsqueda</strong> — para que los listados de la API sean usables incluso con miles de registros.</div>
+
+</body>
+</html>

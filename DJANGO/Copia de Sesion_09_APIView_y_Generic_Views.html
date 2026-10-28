@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sesión 9 — APIView y Generic Views</title>
+<style>
+  body { font-family: Calibri, 'Segoe UI', Arial, sans-serif; color: #222; max-width: 900px; margin: 30px auto; padding: 0 20px; line-height: 1.5; }
+  .banner { background-color: #1f4e79; color: #fff; padding: 18px 22px; border-radius: 6px; }
+  .banner h1 { margin: 0; font-size: 22px; }
+  .subtitle { font-style: italic; color: #2c5aa0; margin: 10px 2px 22px; font-size: 14px; }
+  table.infotable { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 14px; }
+  table.infotable td { border: 1px solid #bbc9d9; padding: 8px 10px; }
+  table.infotable td.label { background-color: #dce6f2; font-weight: bold; width: 12%; }
+  table.sessiontable { width: 100%; border-collapse: collapse; margin-bottom: 26px; font-size: 12.5px; }
+  table.sessiontable th { background-color: #1f4e79; color: #fff; padding: 8px 6px; }
+  table.sessiontable td { border: 1px solid #ccc; padding: 8px 6px; vertical-align: top; }
+  table.sessiontable td.tema { font-weight: bold; color: #b5651d; font-style: italic; }
+  .section-header { background-color: #b5651d; color: #fff; font-weight: bold; font-size: 15px; padding: 9px 14px; border-radius: 3px; margin: 30px 0 12px; }
+  .callout-key { border-left: 4px solid #4caf50; background-color: #eaf7ea; padding: 10px 14px; margin: 15px 0; }
+  .callout-error { border-left: 4px solid #e08a3c; background-color: #fdf1e3; padding: 10px 14px; margin: 15px 0; }
+  pre { background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 13px; line-height: 1.5; }
+  code { font-family: Consolas, 'Courier New', monospace; background-color: #eee; padding: 2px 5px; border-radius: 3px; color: #a6350f; }
+  pre code { background: none; padding: 0; color: inherit; }
+  table.simple { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+  table.simple th, table.simple td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.simple th { background-color: #f0f0f0; }
+  table.errores td.mark { color: #c0392b; font-weight: bold; width: 4%; }
+  table.checklist td.mark { width: 4%; font-size: 16px; }
+  ol, ul { padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .footer-note { font-style: italic; color: #666; border-top: 1px solid #ddd; padding-top: 12px; margin-top: 34px; font-size: 13.5px; }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <h1>SESIÓN DE CLASE — Django REST Framework + API (FastAPI) + Proyecto Integrador</h1>
+</div>
+<div class="subtitle">Sesión N° 9 — 19 Octubre de 2026 (Lunes) — Bloque 1: Django REST Framework</div>
+
+<table class="infotable">
+  <tr><td class="label">Instructor</td><td>César Augusto Moreno Mena</td><td class="label">Centro</td><td>CESGE</td></tr>
+  <tr><td class="label">Curso</td><td>Django REST Framework + API (FastAPI) + Proyecto Integrador</td><td class="label">Año</td><td>2026</td></tr>
+</table>
+
+<table class="sessiontable">
+<tr><th>N°</th><th>Fecha</th><th>Día</th><th>Semana</th><th>Bloque</th><th>Tema de la sesión</th><th>Teoría</th><th>Ejemplo</th><th>Práctica</th></tr>
+<tr>
+  <td>9</td><td>19 Octubre</td><td>Lunes</td><td>S4</td><td>Bloque 1: Django REST Framework</td>
+  <td class="tema">APIView y Generic Views</td>
+  <td>APIView para control granular, vistas genéricas (ListCreateAPIView, RetrieveUpdateDestroyAPIView).</td>
+  <td>Reescritura de un endpoint usando APIView para lógica personalizada.</td>
+  <td>Implementación de un endpoint con lógica de negocio específica usando APIView.</td>
+</tr>
+</table>
+
+<div class="section-header">1. Objetivo de la sesión</div>
+<p>Al finalizar esta sesión, el aprendiz será capaz de identificar cuándo un <strong>ModelViewSet</strong> se queda corto, escribir una vista con <strong>APIView</strong> para tener control total sobre la lógica, y usar <strong>Generic Views</strong> como un punto intermedio entre el control manual de APIView y la automatización total de ModelViewSet.</p>
+
+<div class="section-header">2. ¿Por qué no siempre alcanza con ModelViewSet?</div>
+<p>ModelViewSet es excelente para CRUDs estándar, pero en el mundo real casi siempre aparece lógica de negocio que no encaja en el molde genérico: por ejemplo, que crear un libro también descuente stock de otro recurso, que una acción dependa del usuario autenticado, o que un endpoint no represente un modelo completo sino una operación puntual (como "marcar como prestado").</p>
+<p>DRF ofrece tres niveles de abstracción, de más manual a más automático:</p>
+<table class="simple">
+<tr><th>Nivel</th><th>Clase base</th><th>Cuándo usarla</th></tr>
+<tr><td>Manual</td><td><code>APIView</code></td><td>Necesitas control total: lógica de negocio particular, combinar varios modelos, respuestas no estándar.</td></tr>
+<tr><td>Intermedio</td><td><code>Generic Views</code> (<code>ListCreateAPIView</code>, etc.)</td><td>Es casi un CRUD estándar, pero quieres personalizar un detalle puntual (por ejemplo, el queryset o quién puede ver qué).</td></tr>
+<tr><td>Automático</td><td><code>ModelViewSet</code></td><td>CRUD estándar sin reglas especiales (lo que usamos en la sesión 7).</td></tr>
+</table>
+<div class="callout-key">
+  💡 <strong>Idea clave</strong><br>
+  No se trata de "cuál es mejor": se trata de elegir la herramienta según cuánto control necesitas. Empezar siempre por <code>ModelViewSet</code> y bajar de nivel solo cuando el genérico no alcance es la práctica recomendada.
+</div>
+
+<div class="section-header">3. APIView: control total</div>
+<p><code>APIView</code> es la clase base de la que heredan todas las demás. Cada verbo HTTP se implementa como un método de la clase (<code>get</code>, <code>post</code>, <code>put</code>, <code>delete</code>):</p>
+<pre><code>from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Libro
+from .serializers import LibroSerializer
+
+class LibroDisponibleAPIView(APIView):
+    """Devuelve solo los libros marcados como disponibles."""
+
+    def get(self, request):
+        libros = Libro.objects.filter(disponible=True)
+        serializer = LibroSerializer(libros, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = LibroSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)</code></pre>
+<p>Con <code>APIView</code> decidimos manualmente qué queryset usar, qué serializer aplicar y qué código de estado devolver en cada caso. Es exactamente el mismo control que ya practicamos en la sesión 5 con <code>@api_view</code>, pero organizado como clase.</p>
+<p>Conéctala en <code>urls.py</code> como una vista de clase, usando <code>.as_view()</code>:</p>
+<pre><code>from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('libros/disponibles/', views.LibroDisponibleAPIView.as_view(), name='libros_disponibles'),
+]</code></pre>
+
+<div class="section-header">4. Generic Views: el punto intermedio</div>
+<p>Las <strong>Generic Views</strong> ya traen implementada la lógica común (listar, crear, actualizar, borrar) pero permiten personalizar puntos clave sobreescribiendo atributos o métodos:</p>
+<pre><code>from rest_framework import generics
+from .models import Libro
+from .serializers import LibroSerializer
+
+class LibroListCreateView(generics.ListCreateAPIView):
+    serializer_class = LibroSerializer
+
+    def get_queryset(self):
+        # Personalización: solo libros disponibles, ordenados por título
+        return Libro.objects.filter(disponible=True).order_by('titulo')
+
+class LibroDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Libro.objects.all()
+    serializer_class = LibroSerializer</code></pre>
+<p>Aquí el listado (GET) y la creación (POST) quedan resueltos por <code>ListCreateAPIView</code>, pero personalizamos <code>get_queryset()</code> para filtrar solo los disponibles. La clase <code>RetrieveUpdateDestroyAPIView</code> resuelve detalle, actualización y borrado sin código adicional.</p>
+
+<div class="section-header">5. Ejercicio práctico (para hacer en clase)</div>
+<ol>
+  <li>Identifica una regla de negocio de tu proyecto que un <code>ModelViewSet</code> genérico no resolvería directamente (ej. "solo mostrar los productos con stock" o "solo permitir crear si el usuario cumple una condición").</li>
+  <li>Implementa esa regla en una clase <code>APIView</code>, sobreescribiendo el método <code>get</code> o <code>post</code> según corresponda.</li>
+  <li>Conecta tu <code>APIView</code> a una ruta específica (distinta de las generadas por el router) en <code>urls.py</code> usando <code>.as_view()</code>.</li>
+  <li>Reescribe el mismo endpoint usando una <strong>Generic View</strong> apropiada (<code>ListCreateAPIView</code>, <code>RetrieveUpdateDestroyAPIView</code>, etc.) sobreescribiendo <code>get_queryset()</code>.</li>
+  <li>Compara ambas implementaciones y anota en un comentario cuántas líneas de código ahorró la Generic View frente al APIView manual.</li>
+  <li>Verifica en la Browsable API que ambas versiones del endpoint (APIView y Generic View) devuelven el mismo resultado.</li>
+</ol>
+
+<div class="section-header">6. Errores comunes</div>
+<table class="simple errores">
+<tr><td class="mark">✗</td><td>Olvidar <code>.as_view()</code> al conectar un APIView o Generic View en <code>urls.py</code> → error <code>TypeError: view must be a callable</code>.</td></tr>
+<tr><td class="mark">✗</td><td>Implementar un método HTTP que no corresponde a la Generic View elegida (por ejemplo, esperar que <code>ListCreateAPIView</code> soporte DELETE) → error 405 Method Not Allowed.</td></tr>
+<tr><td class="mark">✗</td><td>Olvidar <code>raise_exception=True</code> en <code>is_valid()</code> dentro de un APIView manual y no manejar el caso de error a mano → la vista falla silenciosamente o con una excepción no controlada.</td></tr>
+<tr><td class="mark">✗</td><td>Definir <code>queryset</code> y <code>get_queryset()</code> al mismo tiempo sin necesidad → confusión sobre cuál tiene prioridad (siempre gana <code>get_queryset()</code> si está definido).</td></tr>
+</table>
+
+<div class="section-header">7. Resumen de la sesión (checklist de aprendizaje)</div>
+<table class="simple checklist">
+<tr><td class="mark">☐</td><td>Sé explicar cuándo conviene un APIView frente a un ModelViewSet.</td></tr>
+<tr><td class="mark">☐</td><td>Sé implementar los métodos <code>get</code> y <code>post</code> dentro de un APIView.</td></tr>
+<tr><td class="mark">☐</td><td>Sé usar al menos dos Generic Views (<code>ListCreateAPIView</code>, <code>RetrieveUpdateDestroyAPIView</code>).</td></tr>
+<tr><td class="mark">☐</td><td>Sé personalizar el queryset de una Generic View sobreescribiendo <code>get_queryset()</code>.</td></tr>
+<tr><td class="mark">☐</td><td>Sé conectar vistas de clase en <code>urls.py</code> con <code>.as_view()</code>.</td></tr>
+</table>
+
+<div class="footer-note">Próxima sesión (21 de octubre): integraremos todo lo visto para dejar un <strong>CRUD completo con DRF</strong>, probado de punta a punta sobre el recurso principal del proyecto.</div>
+
+</body>
+</html>

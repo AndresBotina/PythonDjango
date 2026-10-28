@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sesión 8 — Repaso y práctica integradora</title>
+<style>
+  body { font-family: Calibri, 'Segoe UI', Arial, sans-serif; color: #222; max-width: 900px; margin: 30px auto; padding: 0 20px; line-height: 1.5; }
+  .banner { background-color: #1f4e79; color: #fff; padding: 18px 22px; border-radius: 6px; }
+  .banner h1 { margin: 0; font-size: 22px; }
+  .subtitle { font-style: italic; color: #2c5aa0; margin: 10px 2px 22px; font-size: 14px; }
+  table.infotable { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 14px; }
+  table.infotable td { border: 1px solid #bbc9d9; padding: 8px 10px; }
+  table.infotable td.label { background-color: #dce6f2; font-weight: bold; width: 12%; }
+  table.sessiontable { width: 100%; border-collapse: collapse; margin-bottom: 26px; font-size: 12.5px; }
+  table.sessiontable th { background-color: #1f4e79; color: #fff; padding: 8px 6px; }
+  table.sessiontable td { border: 1px solid #ccc; padding: 8px 6px; vertical-align: top; }
+  table.sessiontable td.tema { font-weight: bold; font-style: italic; color: #4a4a4a; }
+  .section-header { background-color: #52585e; color: #fff; font-weight: bold; font-size: 15px; padding: 9px 14px; border-radius: 3px; margin: 30px 0 12px; }
+  .callout-key { border-left: 4px solid #4caf50; background-color: #eaf7ea; padding: 10px 14px; margin: 15px 0; }
+  .callout-error { border-left: 4px solid #e08a3c; background-color: #fdf1e3; padding: 10px 14px; margin: 15px 0; }
+  pre { background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 13px; line-height: 1.5; }
+  code { font-family: Consolas, 'Courier New', monospace; background-color: #eee; padding: 2px 5px; border-radius: 3px; color: #a6350f; }
+  pre code { background: none; padding: 0; color: inherit; }
+  table.simple { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+  table.simple th, table.simple td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.simple th { background-color: #f0f0f0; }
+  table.check td.mark { width: 4%; text-align: center; }
+  ol, ul { padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .footer-note { font-style: italic; color: #666; border-top: 1px solid #ddd; padding-top: 12px; margin-top: 34px; font-size: 13.5px; }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <h1>SESIÓN DE CLASE — Django REST Framework + API (FastAPI) + Proyecto Integrador</h1>
+</div>
+<div class="subtitle">Sesión N° 8 — 16 Octubre de 2026 (Viernes) — Bloque 1: Django REST Framework</div>
+
+<table class="infotable">
+  <tr><td class="label">Instructor</td><td>César Augusto Moreno Mena</td><td class="label">Centro</td><td>CESGE</td></tr>
+  <tr><td class="label">Curso</td><td>Django REST Framework + API (FastAPI) + Proyecto Integrador</td><td class="label">Año</td><td>2026</td></tr>
+</table>
+
+<table class="sessiontable">
+<tr><th>N°</th><th>Fecha</th><th>Día</th><th>Semana</th><th>Bloque</th><th>Tema de la sesión</th><th>Teoría</th><th>Ejemplo</th><th>Práctica</th></tr>
+<tr>
+  <td>8</td><td>16 Octubre</td><td>Viernes</td><td>S3</td><td>Bloque 1: Django REST Framework</td>
+  <td class="tema">Repaso y práctica integradora</td>
+  <td>Sesión de consolidación de los temas vistos en las sesiones anteriores de Django REST Framework: Introducción a Django REST Framework, Serializers, ViewSets y Routers. Aclaración de dudas y retroalimentación grupal sobre los avances del proyecto.</td>
+  <td>Revisión guiada en vivo de los ejercicios y avances entregados por los aprendices, con corrección de errores comunes.</td>
+  <td>Los aprendices resuelven ejercicios adicionales de refuerzo y avanzan en su proyecto personal.</td>
+</tr>
+</table>
+
+<div class="section-header">1. Objetivo de la sesión</div>
+<p>Esta es una sesión de <strong>repaso y práctica integradora</strong>. El objetivo es que el aprendiz <strong>consolide</strong> en su proyecto personal de API los tres temas vistos este bloque: <em>Introducción a DRF</em> (9 de octubre), <em>Serializers</em> (14 de octubre) y <em>ViewSets y Routers</em> (15 de octubre), resolviendo dudas y corrigiendo errores comunes antes de avanzar a temas más avanzados de la API.</p>
+
+<div class="section-header">2. Repaso rápido de conceptos clave</div>
+<p><strong>Sesión 5 (9 oct) — Introducción a DRF</strong></p>
+<table class="simple">
+<tr><td>✓</td><td>DRF se instala con <code>pip install djangorestframework</code> y se registra como <code>'rest_framework'</code> en <code>INSTALLED_APPS</code>.</td></tr>
+<tr><td>✓</td><td>DRF resuelve el problema de exponer los modelos de Django como JSON consumible por cualquier cliente (app móvil, frontend, etc.), en lugar de HTML.</td></tr>
+<tr><td>✓</td><td>La Browsable API es la interfaz navegable que DRF genera automáticamente para probar los endpoints desde el navegador.</td></tr>
+</table>
+<p><strong>Sesión 6 (14 oct) — Serializers</strong></p>
+<table class="simple">
+<tr><td>✓</td><td>Un <code>ModelSerializer</code> traduce entre un modelo y JSON, generando los campos automáticamente a partir de <code>Meta.model</code> y <code>Meta.fields</code>.</td></tr>
+<tr><td>✓</td><td>Serializar es modelo → JSON (<code>serializer.data</code>); deserializar es JSON → datos validados de Python (<code>is_valid()</code>, <code>save()</code>).</td></tr>
+<tr><td>✓</td><td>Las validaciones personalizadas se escriben con <code>validate_&lt;campo&gt;</code> (un campo) o <code>validate</code> (varios campos a la vez).</td></tr>
+</table>
+<p><strong>Sesión 7 (15 oct) — ViewSets y Routers</strong></p>
+<table class="simple">
+<tr><td>✓</td><td>Un <code>ModelViewSet</code> agrupa listar, crear, ver detalle, actualizar y borrar en una sola clase, a partir de <code>queryset</code> y <code>serializer_class</code>.</td></tr>
+<tr><td>✓</td><td>Un <code>DefaultRouter</code> genera automáticamente las URLs del CRUD al registrar el ViewSet con <code>router.register()</code>.</td></tr>
+<tr><td>✓</td><td>PUT actualiza el recurso completo; PATCH permite actualizar solo algunos campos.</td></tr>
+</table>
+
+<div class="section-header">3. Autoevaluación: ¿qué tan seguro te sientes?</div>
+<p>Antes de empezar el ejercicio integrador, responde honestamente estas preguntas (puedes comentarlas con tu instructor si tienes dudas en alguna):</p>
+<ol>
+  <li>¿Puedo explicar con mis propias palabras qué problema resuelve DRF frente a las vistas tradicionales de Django?</li>
+  <li>¿Sé la diferencia entre serializar y deserializar?</li>
+  <li>¿Sé cuándo usar <code>validate_&lt;campo&gt;</code> y cuándo usar <code>validate</code>?</li>
+  <li>¿Sé registrar un ViewSet en un router y qué URLs se generan automáticamente?</li>
+  <li>Si mi API responde con un error 500 al serializar un objeto, ¿sé en qué archivos debo revisar primero (modelo, serializer o vista)?</li>
+</ol>
+<p><em>Si respondiste "no" a alguna pregunta, aprovecha el espacio de dudas de hoy antes de avanzar al ejercicio integrador.</em></p>
+
+<div class="section-header">4. Ejercicio integrador paso a paso</div>
+<p>Vamos a exponer como API completa el sistema de "Biblioteca" construido entre las sesiones 1 y 4, combinando los tres temas de este bloque. Sigue los pasos en orden:</p>
+<p><strong>Paso 1: Instalación y configuración (repaso sesión 5)</strong></p>
+<pre><code>pip install djangorestframework</code></pre>
+<p>Agrega <code>'rest_framework'</code> a <code>INSTALLED_APPS</code>.</p>
+<p><strong>Paso 2: Serializers (repaso sesión 6)</strong></p>
+<p>En <code>biblioteca/serializers.py</code>:</p>
+<pre><code>from rest_framework import serializers
+from .models import Autor, Libro
+
+class AutorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Autor
+        fields = ['id', 'nombre', 'nacionalidad']
+
+class LibroSerializer(serializers.ModelSerializer):
+    autor_nombre = serializers.CharField(source='autor.nombre', read_only=True)
+
+    class Meta:
+        model = Libro
+        fields = ['id', 'titulo', 'autor', 'autor_nombre', 'precio', 'disponible', 'fecha_publicacion']
+
+    def validate_precio(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("El precio debe ser mayor que cero.")
+        return value</code></pre>
+<p><strong>Paso 3: ViewSets y Router (repaso sesión 7)</strong></p>
+<p>En <code>biblioteca/views.py</code>:</p>
+<pre><code>from rest_framework import viewsets
+from .models import Autor, Libro
+from .serializers import AutorSerializer, LibroSerializer
+
+class AutorViewSet(viewsets.ModelViewSet):
+    queryset = Autor.objects.all()
+    serializer_class = AutorSerializer
+
+class LibroViewSet(viewsets.ModelViewSet):
+    queryset = Libro.objects.all().order_by('titulo')
+    serializer_class = LibroSerializer</code></pre>
+<p>En <code>biblioteca/urls.py</code>:</p>
+<pre><code>from rest_framework.routers import DefaultRouter
+from django.urls import path, include
+from . import views
+
+router = DefaultRouter()
+router.register('autores', views.AutorViewSet, basename='autor')
+router.register('libros', views.LibroViewSet, basename='libro')
+
+urlpatterns = [
+    path('resumen/', views.resumen, name='resumen'),
+    path('', include(router.urls)),
+]</code></pre>
+<p><strong>Paso 4: Verificación end-to-end</strong></p>
+<p>Levanta el servidor y, desde la Browsable API en <code>/biblioteca/libros/</code>, realiza en orden: un GET de listado, un POST de creación con un precio inválido (debe fallar por la validación), un POST válido, un PATCH sobre el registro creado y un DELETE final.</p>
+
+<div class="section-header">5. Errores comunes del bloque (repaso general)</div>
+<table class="simple">
+<tr><td>✗</td><td>Olvidar registrar <code>rest_framework</code> en <code>INSTALLED_APPS</code> → la Browsable API no se ve estilizada o falla.</td></tr>
+<tr><td>✗</td><td>Exponer todos los campos del modelo con <code>'__all__'</code> sin revisar si alguno debería quedar oculto.</td></tr>
+<tr><td>✗</td><td>Olvidar <code>basename</code> en <code>router.register()</code> cuando el ViewSet sobreescribe <code>get_queryset()</code>.</td></tr>
+<tr><td>✗</td><td>Confundir PUT (todos los campos) con PATCH (campos parciales) y recibir errores de validación inesperados.</td></tr>
+<tr><td>✗</td><td>Llamar <code>serializer.save()</code> sin haber llamado antes a <code>is_valid()</code>.</td></tr>
+</table>
+
+<div class="section-header">6. Espacio de dudas y retroalimentación</div>
+<p>Este es el momento de la sesión para plantear al instructor cualquier duda pendiente del bloque: errores de instalación, mensajes de error que no entendiste, o partes de la arquitectura de DRF que no quedaron claras. Trae tu proyecto personal abierto para revisión en vivo.</p>
+
+<div class="section-header">7. Checklist final del bloque (Sesiones 5–7)</div>
+<table class="simple check">
+<tr><td class="mark">☐</td><td>Mi API responde correctamente en <code>/api/</code> (o la ruta que hayas definido) sin errores 500.</td></tr>
+<tr><td class="mark">☐</td><td>Tengo al menos un <code>ModelSerializer</code> con un campo calculado y una validación personalizada.</td></tr>
+<tr><td class="mark">☐</td><td>Tengo al menos un <code>ModelViewSet</code> registrado en un <code>DefaultRouter</code>.</td></tr>
+<tr><td class="mark">☐</td><td>Puedo listar, crear, actualizar (PUT/PATCH) y borrar un recurso desde la Browsable API.</td></tr>
+<tr><td class="mark">☐</td><td>Sé explicar la diferencia entre serializar y deserializar con mis propias palabras.</td></tr>
+</table>
+
+<div class="footer-note">Próxima sesión (19 de octubre): <strong>APIView y Generic Views</strong> — cuándo y cómo tomar control granular de la lógica de una vista cuando un ModelViewSet no es suficiente.</div>
+
+</body>
+</html>

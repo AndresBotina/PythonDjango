@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sesión 13 — Paginación, filtros y búsqueda</title>
+<style>
+  body { font-family: Calibri, 'Segoe UI', Arial, sans-serif; color: #222; max-width: 900px; margin: 30px auto; padding: 0 20px; line-height: 1.5; }
+  .banner { background-color: #1f4e79; color: #fff; padding: 18px 22px; border-radius: 6px; }
+  .banner h1 { margin: 0; font-size: 22px; }
+  .subtitle { font-style: italic; color: #2c5aa0; margin: 10px 2px 22px; font-size: 14px; }
+  table.infotable { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 14px; }
+  table.infotable td { border: 1px solid #bbc9d9; padding: 8px 10px; }
+  table.infotable td.label { background-color: #dce6f2; font-weight: bold; width: 12%; }
+  table.sessiontable { width: 100%; border-collapse: collapse; margin-bottom: 26px; font-size: 12.5px; }
+  table.sessiontable th { background-color: #1f4e79; color: #fff; padding: 8px 6px; }
+  table.sessiontable td { border: 1px solid #ccc; padding: 8px 6px; vertical-align: top; }
+  table.sessiontable td.tema { font-weight: bold; color: #b5651d; font-style: italic; }
+  .section-header { background-color: #b5651d; color: #fff; font-weight: bold; font-size: 15px; padding: 9px 14px; border-radius: 3px; margin: 30px 0 12px; }
+  .callout-key { border-left: 4px solid #4caf50; background-color: #eaf7ea; padding: 10px 14px; margin: 15px 0; }
+  .callout-error { border-left: 4px solid #e08a3c; background-color: #fdf1e3; padding: 10px 14px; margin: 15px 0; }
+  pre { background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 13px; line-height: 1.5; }
+  code { font-family: Consolas, 'Courier New', monospace; background-color: #eee; padding: 2px 5px; border-radius: 3px; color: #a6350f; }
+  pre code { background: none; padding: 0; color: inherit; }
+  table.simple { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+  table.simple th, table.simple td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.simple th { background-color: #f0f0f0; }
+  table.errores td.mark { color: #c0392b; font-weight: bold; width: 4%; }
+  table.checklist td.mark { width: 4%; font-size: 16px; }
+  ol, ul { padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .footer-note { font-style: italic; color: #666; border-top: 1px solid #ddd; padding-top: 12px; margin-top: 34px; font-size: 13.5px; }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <h1>SESIÓN DE CLASE — Django REST Framework + API (FastAPI) + Proyecto Integrador</h1>
+</div>
+<div class="subtitle">Sesión N° 13 — 26 Octubre de 2026 (Lunes) — Bloque 1: Django REST Framework</div>
+
+<table class="infotable">
+  <tr><td class="label">Instructor</td><td>César Augusto Moreno Mena</td><td class="label">Centro</td><td>CESGE</td></tr>
+  <tr><td class="label">Curso</td><td>Django REST Framework + API (FastAPI) + Proyecto Integrador</td><td class="label">Año</td><td>2026</td></tr>
+</table>
+
+<table class="sessiontable">
+<tr><th>N°</th><th>Fecha</th><th>Día</th><th>Semana</th><th>Bloque</th><th>Tema de la sesión</th><th>Teoría</th><th>Ejemplo</th><th>Práctica</th></tr>
+<tr>
+  <td>13</td><td>26 Octubre</td><td>Lunes</td><td>S5</td><td>Bloque 1: Django REST Framework</td>
+  <td class="tema">Paginación, filtros y búsqueda</td>
+  <td>Clases de paginación de DRF, django-filter para filtrado avanzado, búsqueda y ordenamiento.</td>
+  <td>Configuración de paginación y filtros sobre un listado de recursos.</td>
+  <td>Adición de filtros, búsqueda y paginación a los listados del proyecto.</td>
+</tr>
+</table>
+
+<div class="section-header">1. Objetivo de la sesión</div>
+<p>Al finalizar esta sesión, el aprendiz será capaz de configurar <strong>paginación</strong> para listados grandes, agregar <strong>filtros</strong> con <code>django-filter</code>, y habilitar <strong>búsqueda y ordenamiento</strong> dinámico sobre los endpoints de listado.</p>
+
+<div class="section-header">2. ¿Por qué paginar, filtrar y buscar?</div>
+<p>Nuestro proyecto "Biblioteca" tiene pocos registros, pero en producción un listado puede tener miles. Devolver todos los registros en una sola respuesta es lento para el servidor y para el cliente. Además, casi ningún cliente real necesita "todos los libros": necesita "los libros del autor X que contienen la palabra Y en el título, ordenados por precio".</p>
+<table class="simple">
+<tr><th>Herramienta</th><th>Resuelve</th></tr>
+<tr><td><strong>Paginación</strong></td><td>Dividir un listado grande en páginas pequeñas y manejables.</td></tr>
+<tr><td><strong>Filtros</strong> (<code>django-filter</code>)</td><td>Permitir al cliente pedir solo los registros que cumplen ciertas condiciones exactas (ej. <code>?disponible=true</code>).</td></tr>
+<tr><td><strong>Búsqueda</strong> (<code>SearchFilter</code>)</td><td>Buscar coincidencias parciales de texto en uno o varios campos (ej. <code>?search=cien</code>).</td></tr>
+<tr><td><strong>Ordenamiento</strong> (<code>OrderingFilter</code>)</td><td>Permitir que el cliente decida el orden del listado (ej. <code>?ordering=precio</code>).</td></tr>
+</table>
+
+<div class="section-header">3. Paginación</div>
+<p>Ya configuramos una paginación básica global en la sesión 5. Repasemos y ajustemos en <code>settings.py</code>:</p>
+<pre><code>REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+}</code></pre>
+<p>Con esto, <code>GET /biblioteca/libros/</code> devuelve como máximo 5 resultados por página, junto con enlaces <code>next</code> y <code>previous</code>:</p>
+<pre><code>{
+    "count": 23,
+    "next": "http://127.0.0.1:8000/biblioteca/libros/?page=2",
+    "previous": null,
+    "results": [ ... ]
+}</code></pre>
+<p>Si se necesita un tamaño de página distinto por endpoint, se puede definir una clase de paginación propia y asignarla en el ViewSet con <code>pagination_class</code>.</p>
+
+<div class="section-header">4. Filtros con django-filter</div>
+<p><strong>Instalación</strong>:</p>
+<pre><code>pip install django-filter</code></pre>
+<p>Regístralo en <code>INSTALLED_APPS</code> y configúralo como backend de filtrado por defecto:</p>
+<pre><code>INSTALLED_APPS = [
+    # ...
+    'django_filters',
+]
+
+REST_FRAMEWORK = {
+    # ...
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+}</code></pre>
+<p>En el ViewSet, se indica sobre qué campos se puede filtrar:</p>
+<pre><code>from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, filters
+from .models import Libro
+from .serializers import LibroSerializer
+
+class LibroViewSet(viewsets.ModelViewSet):
+    queryset = Libro.objects.all().order_by('titulo')
+    serializer_class = LibroSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['disponible', 'autor']
+    search_fields = ['titulo', 'autor__nombre']
+    ordering_fields = ['precio', 'fecha_publicacion']</code></pre>
+<p>Con esta configuración, el cliente puede combinar libremente:</p>
+<pre><code>GET /biblioteca/libros/?disponible=true
+GET /biblioteca/libros/?autor=1&amp;ordering=-precio
+GET /biblioteca/libros/?search=cien</code></pre>
+
+<div class="section-header">5. Ejercicio práctico (para hacer en clase)</div>
+<ol>
+  <li>Instala <code>django-filter</code> y configúralo como <code>DEFAULT_FILTER_BACKENDS</code> del proyecto.</li>
+  <li>Agrega <code>filterset_fields</code> a un ViewSet, permitiendo filtrar por al menos dos campos exactos (por ejemplo, un booleano y una relación).</li>
+  <li>Agrega <code>search_fields</code> incluyendo al menos un campo de texto propio y un campo de una relación (usando <code>__</code>).</li>
+  <li>Agrega <code>ordering_fields</code> con al menos dos campos numéricos o de fecha.</li>
+  <li>Prueba desde la Browsable API: filtra por un campo exacto, busca un texto parcial y ordena descendente por uno de los campos habilitados.</li>
+  <li>Ajusta <code>PAGE_SIZE</code> a un valor razonable para tu proyecto y confirma que el listado incluye <code>count</code>, <code>next</code> y <code>previous</code>.</li>
+</ol>
+
+<div class="section-header">6. Errores comunes</div>
+<table class="simple errores">
+<tr><td class="mark">✗</td><td>Instalar <code>django-filter</code> pero registrar mal el nombre de la app en <code>INSTALLED_APPS</code> (es <code>django_filters</code>, con guion bajo, no <code>django-filter</code>).</td></tr>
+<tr><td class="mark">✗</td><td>Olvidar <code>filter_backends</code> a nivel de vista cuando no se configuró globalmente en <code>settings.py</code> → los parámetros de filtro se ignoran silenciosamente.</td></tr>
+<tr><td class="mark">✗</td><td>Poner en <code>filterset_fields</code> un campo relacionado sin verificar que acepte el tipo de filtro exacto que se espera (por ejemplo, texto libre en vez de coincidencia exacta).</td></tr>
+<tr><td class="mark">✗</td><td>Usar <code>search_fields</code> para buscar en campos numéricos esperando comparación exacta: <code>SearchFilter</code> hace coincidencia parcial de texto, no comparación numérica.</td></tr>
+</table>
+
+<div class="section-header">7. Resumen de la sesión (checklist de aprendizaje)</div>
+<table class="simple checklist">
+<tr><td class="mark">☐</td><td>Sé configurar paginación global con <code>PageNumberPagination</code> y <code>PAGE_SIZE</code>.</td></tr>
+<tr><td class="mark">☐</td><td>Sé instalar y configurar <code>django-filter</code>.</td></tr>
+<tr><td class="mark">☐</td><td>Sé definir <code>filterset_fields</code>, <code>search_fields</code> y <code>ordering_fields</code> en un ViewSet.</td></tr>
+<tr><td class="mark">☐</td><td>Sé combinar filtros, búsqueda y ordenamiento en una misma petición mediante query params.</td></tr>
+</table>
+
+<div class="footer-note">Próxima sesión (28 de octubre): trabajaremos <strong>relaciones y serializers anidados</strong>, para representar en la API estructuras más complejas que un solo modelo plano.</div>
+
+</body>
+</html>

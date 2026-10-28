@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sesión 7 — ViewSets y Routers</title>
+<style>
+  body { font-family: Calibri, 'Segoe UI', Arial, sans-serif; color: #222; max-width: 900px; margin: 30px auto; padding: 0 20px; line-height: 1.5; }
+  .banner { background-color: #1f4e79; color: #fff; padding: 18px 22px; border-radius: 6px; }
+  .banner h1 { margin: 0; font-size: 22px; }
+  .subtitle { font-style: italic; color: #2c5aa0; margin: 10px 2px 22px; font-size: 14px; }
+  table.infotable { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 14px; }
+  table.infotable td { border: 1px solid #bbc9d9; padding: 8px 10px; }
+  table.infotable td.label { background-color: #dce6f2; font-weight: bold; width: 12%; }
+  table.sessiontable { width: 100%; border-collapse: collapse; margin-bottom: 26px; font-size: 12.5px; }
+  table.sessiontable th { background-color: #1f4e79; color: #fff; padding: 8px 6px; }
+  table.sessiontable td { border: 1px solid #ccc; padding: 8px 6px; vertical-align: top; }
+  table.sessiontable td.tema { font-weight: bold; color: #b5651d; font-style: italic; }
+  .section-header { background-color: #b5651d; color: #fff; font-weight: bold; font-size: 15px; padding: 9px 14px; border-radius: 3px; margin: 30px 0 12px; }
+  .callout-key { border-left: 4px solid #4caf50; background-color: #eaf7ea; padding: 10px 14px; margin: 15px 0; }
+  .callout-error { border-left: 4px solid #e08a3c; background-color: #fdf1e3; padding: 10px 14px; margin: 15px 0; }
+  pre { background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 13px; line-height: 1.5; }
+  code { font-family: Consolas, 'Courier New', monospace; background-color: #eee; padding: 2px 5px; border-radius: 3px; color: #a6350f; }
+  pre code { background: none; padding: 0; color: inherit; }
+  table.simple { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+  table.simple th, table.simple td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.simple th { background-color: #f0f0f0; }
+  table.errores td.mark { color: #c0392b; font-weight: bold; width: 4%; }
+  table.checklist td.mark { width: 4%; font-size: 16px; }
+  ol, ul { padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .footer-note { font-style: italic; color: #666; border-top: 1px solid #ddd; padding-top: 12px; margin-top: 34px; font-size: 13.5px; }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <h1>SESIÓN DE CLASE — Django REST Framework + API (FastAPI) + Proyecto Integrador</h1>
+</div>
+<div class="subtitle">Sesión N° 7 — 15 Octubre de 2026 (Jueves) — Bloque 1: Django REST Framework</div>
+
+<table class="infotable">
+  <tr><td class="label">Instructor</td><td>César Augusto Moreno Mena</td><td class="label">Centro</td><td>CESGE</td></tr>
+  <tr><td class="label">Curso</td><td>Django REST Framework + API (FastAPI) + Proyecto Integrador</td><td class="label">Año</td><td>2026</td></tr>
+</table>
+
+<table class="sessiontable">
+<tr><th>N°</th><th>Fecha</th><th>Día</th><th>Semana</th><th>Bloque</th><th>Tema de la sesión</th><th>Teoría</th><th>Ejemplo</th><th>Práctica</th></tr>
+<tr>
+  <td>7</td><td>15 Octubre</td><td>Jueves</td><td>S3</td><td>Bloque 1: Django REST Framework</td>
+  <td class="tema">ViewSets y Routers</td>
+  <td>ModelViewSet, routers automáticos, generación rápida de endpoints CRUD.</td>
+  <td>Exposición de un CRUD completo en pocas líneas usando ModelViewSet y router.</td>
+  <td>Implementación de ViewSets para los recursos principales del proyecto.</td>
+</tr>
+</table>
+
+<div class="section-header">1. Objetivo de la sesión</div>
+<p>Al finalizar esta sesión, el aprendiz será capaz de crear un <strong>ModelViewSet</strong> a partir de un modelo y su serializer, conectar ese ViewSet a un <strong>Router</strong> para generar automáticamente las URLs de un CRUD completo, y explicar la diferencia entre escribir vistas una por una y usar un ViewSet.</p>
+
+<div class="section-header">2. De la vista de función al ViewSet</div>
+<p>La sesión 5 escribimos una función con <code>@api_view</code> que solo sabía hacer una cosa: listar. Si quisiéramos también crear, actualizar y borrar libros, tendríamos que escribir y conectar manualmente cuatro o cinco vistas distintas, cada una con su propia ruta en <code>urls.py</code>.</p>
+<p>Un <strong>ViewSet</strong> agrupa toda esa lógica CRUD (listar, crear, ver detalle, actualizar, borrar) en <strong>una sola clase</strong>. Y un <strong>ModelViewSet</strong> va un paso más allá: si le pasamos un <code>queryset</code> y un <code>serializer_class</code>, genera automáticamente las cinco operaciones sin que tengamos que escribir el código de cada una.</p>
+<div class="callout-key">
+  💡 <strong>Idea clave</strong><br>
+  <code>ModelViewSet</code> + <code>Router</code> es la combinación que verás en la inmensa mayoría de proyectos DRF en el mundo real para CRUDs estándar. Solo cuando necesitamos lógica muy particular volvemos a las vistas más manuales (<code>APIView</code>, que veremos en la sesión 9).
+</div>
+
+<div class="section-header">3. Creación de un ModelViewSet</div>
+<p>En <code>biblioteca/views.py</code>, usando el serializer de la sesión anterior:</p>
+<pre><code>from rest_framework import viewsets
+from .models import Autor, Libro
+from .serializers import AutorSerializer, LibroSerializer
+
+class AutorViewSet(viewsets.ModelViewSet):
+    queryset = Autor.objects.all()
+    serializer_class = AutorSerializer
+
+class LibroViewSet(viewsets.ModelViewSet):
+    queryset = Libro.objects.all().order_by('titulo')
+    serializer_class = LibroSerializer</code></pre>
+<p>Con estas dos clases, cada ViewSet ya sabe responder a las siguientes acciones, sin una sola línea adicional:</p>
+<table class="simple">
+<tr><th>Verbo HTTP</th><th>URL</th><th>Acción</th></tr>
+<tr><td>GET</td><td>/libros/</td><td>Listar todos los libros</td></tr>
+<tr><td>POST</td><td>/libros/</td><td>Crear un libro nuevo</td></tr>
+<tr><td>GET</td><td>/libros/{id}/</td><td>Ver el detalle de un libro</td></tr>
+<tr><td>PUT / PATCH</td><td>/libros/{id}/</td><td>Actualizar un libro (completo / parcial)</td></tr>
+<tr><td>DELETE</td><td>/libros/{id}/</td><td>Eliminar un libro</td></tr>
+</table>
+
+<div class="section-header">4. Conectar el ViewSet con un Router</div>
+<p>El <strong>Router</strong> es quien traduce el ViewSet en las URLs de la tabla anterior. Crea o reemplaza <code>biblioteca/urls.py</code>:</p>
+<pre><code>from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from . import views
+
+router = DefaultRouter()
+router.register('autores', views.AutorViewSet, basename='autor')
+router.register('libros', views.LibroViewSet, basename='libro')
+
+urlpatterns = [
+    path('resumen/', views.resumen, name='resumen'),
+    path('', include(router.urls)),
+]</code></pre>
+<p>Recuerda que <code>config/urls.py</code> (el del proyecto) ya incluye las rutas de la app desde la sesión 1:</p>
+<pre><code>urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('biblioteca/', include('biblioteca.urls')),
+]</code></pre>
+<p>Con esto, visitando <code>http://127.0.0.1:8000/biblioteca/libros/</code> tendrás el listado y creación de libros, y <code>http://127.0.0.1:8000/biblioteca/libros/1/</code> el detalle, actualización y borrado del libro con id 1. El <code>DefaultRouter</code> además genera una página raíz de la API en <code>/biblioteca/</code> con enlaces a todos los recursos registrados.</p>
+
+<div class="section-header">5. Ejercicio práctico (para hacer en clase)</div>
+<ol>
+  <li>Crea un <code>ModelViewSet</code> para cada uno de tus modelos principales, usando los serializers de la sesión anterior.</li>
+  <li>Registra ambos ViewSets en un <code>DefaultRouter</code> dentro de <code>urls.py</code> de tu app.</li>
+  <li>Verifica en el navegador que la ruta raíz del router (ej. <code>/api/</code>) muestre los enlaces a tus recursos.</li>
+  <li>Desde la Browsable API, crea un registro nuevo usando el formulario HTML que DRF genera automáticamente al final de la página de listado.</li>
+  <li>Desde la Browsable API, entra al detalle de un registro y pruébalo con el método PATCH para actualizar solo un campo.</li>
+  <li>Elimina un registro usando el botón <strong>DELETE</strong> de la Browsable API y confirma que desaparece del listado.</li>
+  <li>Explica en un comentario dentro de tu código qué diferencia práctica hay entre usar PUT y usar PATCH.</li>
+</ol>
+
+<div class="section-header">6. Errores comunes</div>
+<table class="simple errores">
+<tr><td class="mark">✗</td><td>Olvidar <code>basename</code> en <code>router.register()</code> cuando el ViewSet no define <code>queryset</code> a nivel de clase (por ejemplo, si se sobreescribe <code>get_queryset()</code>) → error al iniciar el servidor.</td></tr>
+<tr><td class="mark">✗</td><td>Registrar el mismo prefijo dos veces en el router → una de las rutas queda inaccesible.</td></tr>
+<tr><td class="mark">✗</td><td>Olvidar <code>include(router.urls)</code> en <code>urlpatterns</code> → todas las rutas del router responden 404.</td></tr>
+<tr><td class="mark">✗</td><td>Confundir PUT (requiere enviar todos los campos) con PATCH (permite enviar solo los campos a modificar) y recibir errores de validación por campos "faltantes".</td></tr>
+</table>
+
+<div class="section-header">7. Resumen de la sesión (checklist de aprendizaje)</div>
+<table class="simple checklist">
+<tr><td class="mark">☐</td><td>Sé crear un <code>ModelViewSet</code> a partir de un <code>queryset</code> y un <code>serializer_class</code>.</td></tr>
+<tr><td class="mark">☐</td><td>Sé registrar un ViewSet en un <code>DefaultRouter</code>.</td></tr>
+<tr><td class="mark">☐</td><td>Puedo listar, crear, ver detalle, actualizar y borrar un recurso desde la Browsable API.</td></tr>
+<tr><td class="mark">☐</td><td>Entiendo la diferencia entre PUT y PATCH.</td></tr>
+<tr><td class="mark">☐</td><td>Puedo explicar cuándo conviene un ModelViewSet frente a escribir vistas una por una.</td></tr>
+</table>
+
+<div class="footer-note">Próxima sesión (16 de octubre): sesión de repaso y práctica integradora sobre Introducción a DRF, Serializers y ViewSets/Routers.</div>
+
+</body>
+</html>

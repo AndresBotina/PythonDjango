@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sesión 11 — Autenticación y permisos en DRF</title>
+<style>
+  body { font-family: Calibri, 'Segoe UI', Arial, sans-serif; color: #222; max-width: 900px; margin: 30px auto; padding: 0 20px; line-height: 1.5; }
+  .banner { background-color: #1f4e79; color: #fff; padding: 18px 22px; border-radius: 6px; }
+  .banner h1 { margin: 0; font-size: 22px; }
+  .subtitle { font-style: italic; color: #2c5aa0; margin: 10px 2px 22px; font-size: 14px; }
+  table.infotable { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 14px; }
+  table.infotable td { border: 1px solid #bbc9d9; padding: 8px 10px; }
+  table.infotable td.label { background-color: #dce6f2; font-weight: bold; width: 12%; }
+  table.sessiontable { width: 100%; border-collapse: collapse; margin-bottom: 26px; font-size: 12.5px; }
+  table.sessiontable th { background-color: #1f4e79; color: #fff; padding: 8px 6px; }
+  table.sessiontable td { border: 1px solid #ccc; padding: 8px 6px; vertical-align: top; }
+  table.sessiontable td.tema { font-weight: bold; color: #b5651d; font-style: italic; }
+  .section-header { background-color: #b5651d; color: #fff; font-weight: bold; font-size: 15px; padding: 9px 14px; border-radius: 3px; margin: 30px 0 12px; }
+  .callout-key { border-left: 4px solid #4caf50; background-color: #eaf7ea; padding: 10px 14px; margin: 15px 0; }
+  .callout-error { border-left: 4px solid #e08a3c; background-color: #fdf1e3; padding: 10px 14px; margin: 15px 0; }
+  pre { background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 13px; line-height: 1.5; }
+  code { font-family: Consolas, 'Courier New', monospace; background-color: #eee; padding: 2px 5px; border-radius: 3px; color: #a6350f; }
+  pre code { background: none; padding: 0; color: inherit; }
+  table.simple { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+  table.simple th, table.simple td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.simple th { background-color: #f0f0f0; }
+  table.errores td.mark { color: #c0392b; font-weight: bold; width: 4%; }
+  table.checklist td.mark { width: 4%; font-size: 16px; }
+  ol, ul { padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .footer-note { font-style: italic; color: #666; border-top: 1px solid #ddd; padding-top: 12px; margin-top: 34px; font-size: 13.5px; }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <h1>SESIÓN DE CLASE — Django REST Framework + API (FastAPI) + Proyecto Integrador</h1>
+</div>
+<div class="subtitle">Sesión N° 11 — 22 Octubre de 2026 (Jueves) — Bloque 1: Django REST Framework</div>
+
+<table class="infotable">
+  <tr><td class="label">Instructor</td><td>César Augusto Moreno Mena</td><td class="label">Centro</td><td>CESGE</td></tr>
+  <tr><td class="label">Curso</td><td>Django REST Framework + API (FastAPI) + Proyecto Integrador</td><td class="label">Año</td><td>2026</td></tr>
+</table>
+
+<table class="sessiontable">
+<tr><th>N°</th><th>Fecha</th><th>Día</th><th>Semana</th><th>Bloque</th><th>Tema de la sesión</th><th>Teoría</th><th>Ejemplo</th><th>Práctica</th></tr>
+<tr>
+  <td>11</td><td>22 Octubre</td><td>Jueves</td><td>S4</td><td>Bloque 1: Django REST Framework</td>
+  <td class="tema">Autenticación y permisos en DRF</td>
+  <td>TokenAuthentication, JWT (SimpleJWT), clases de permisos (IsAuthenticated, permisos personalizados).</td>
+  <td>Configuración de autenticación por token/JWT y protección de endpoints sensibles.</td>
+  <td>Implementación de autenticación y permisos por rol en el proyecto.</td>
+</tr>
+</table>
+
+<div class="section-header">1. Objetivo de la sesión</div>
+<p>Al finalizar esta sesión, el aprendiz será capaz de explicar la diferencia entre <strong>autenticación</strong> (quién eres) y <strong>autorización/permisos</strong> (qué puedes hacer), configurar autenticación por <strong>JWT</strong> con SimpleJWT, y proteger endpoints usando clases de permisos estándar y personalizadas.</p>
+
+<div class="section-header">2. Autenticación vs. permisos</div>
+<p>Hasta ahora nuestra API es completamente abierta: cualquiera puede crear, editar o borrar libros. En un proyecto real eso es inaceptable. DRF separa el problema en dos capas independientes:</p>
+<table class="simple">
+<tr><th>Capa</th><th>Pregunta que responde</th><th>Ejemplo</th></tr>
+<tr><td><strong>Autenticación</strong></td><td>¿Quién está haciendo la petición?</td><td>Un token JWT válido identifica al usuario "carlos".</td></tr>
+<tr><td><strong>Permisos</strong></td><td>¿Puede ese usuario hacer esta acción?</td><td>"carlos" está autenticado, pero solo un administrador puede borrar libros.</td></tr>
+</table>
+<div class="callout-key">
+  💡 <strong>Idea clave</strong><br>
+  Un usuario puede estar perfectamente autenticado (DRF sabe quién es) y aun así no tener permiso para una acción específica. Son dos preguntas distintas y DRF las resuelve con dos configuraciones distintas: <code>authentication_classes</code> y <code>permission_classes</code>.
+</div>
+
+<div class="section-header">3. Autenticación con JWT (SimpleJWT)</div>
+<p><strong>Paso 1: Instalación</strong></p>
+<pre><code>pip install djangorestframework-simplejwt</code></pre>
+<p><strong>Paso 2: Configuración global</strong> en <code>settings.py</code>:</p>
+<pre><code>REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}</code></pre>
+<p><strong>Paso 3: Rutas para obtener y refrescar el token</strong> en <code>config/urls.py</code>:</p>
+<pre><code>from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+urlpatterns = [
+    # ...
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+]</code></pre>
+<p><strong>Paso 4: Obtener un token</strong> enviando usuario y contraseña de un superusuario ya creado (sesión 3):</p>
+<pre><code>POST /api/token/
+{
+    "username": "admin",
+    "password": "tu_contraseña"
+}
+
+# Respuesta:
+{
+    "refresh": "eyJhbGciOi...",
+    "access": "eyJhbGciOi..."
+}</code></pre>
+<p>El <code>access</code> token se envía en cada petición protegida dentro del encabezado <code>Authorization</code>:</p>
+<pre><code>GET /biblioteca/libros/
+Authorization: Bearer eyJhbGciOi...</code></pre>
+
+<div class="section-header">4. Permisos: estándar y personalizados</div>
+<p>DRF incluye clases de permisos listas para usar:</p>
+<table class="simple">
+<tr><th>Clase</th><th>Comportamiento</th></tr>
+<tr><td><code>AllowAny</code></td><td>Cualquiera puede acceder, autenticado o no.</td></tr>
+<tr><td><code>IsAuthenticated</code></td><td>Solo usuarios autenticados (con token válido).</td></tr>
+<tr><td><code>IsAdminUser</code></td><td>Solo usuarios con <code>is_staff=True</code>.</td></tr>
+<tr><td><code>IsAuthenticatedOrReadOnly</code></td><td>Cualquiera puede leer (GET); solo autenticados pueden escribir (POST/PUT/DELETE).</td></tr>
+</table>
+<p>Se pueden combinar por vista, sobreescribiendo la configuración global:</p>
+<pre><code>from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework import viewsets
+from .models import Libro
+from .serializers import LibroSerializer
+
+class LibroViewSet(viewsets.ModelViewSet):
+    queryset = Libro.objects.all().order_by('titulo')
+    serializer_class = LibroSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]</code></pre>
+<p>Cuando la regla de negocio no encaja en las clases estándar, se crea un <strong>permiso personalizado</strong> heredando de <code>BasePermission</code>:</p>
+<pre><code>from rest_framework.permissions import BasePermission
+
+class EsBibliotecarioOSoloLectura(BasePermission):
+    """Solo el grupo 'bibliotecarios' puede escribir; el resto solo puede leer."""
+
+    def has_permission(self, request, view):
+        if request.method in ('GET', 'HEAD', 'OPTIONS'):
+            return True
+        return request.user.is_authenticated and request.user.groups.filter(name='bibliotecarios').exists()</code></pre>
+
+<div class="section-header">5. Ejercicio práctico (para hacer en clase)</div>
+<ol>
+  <li>Instala <code>djangorestframework-simplejwt</code> y configura las rutas <code>/api/token/</code> y <code>/api/token/refresh/</code>.</li>
+  <li>Obtén un token con las credenciales de tu superusuario y verifica que puedas usar el <code>access</code> token para acceder a un endpoint protegido.</li>
+  <li>Configura <code>DEFAULT_PERMISSION_CLASSES</code> globalmente como <code>IsAuthenticated</code> y confirma que, sin token, la API responde 401.</li>
+  <li>Cambia el permiso de al menos un ViewSet a <code>IsAuthenticatedOrReadOnly</code> y verifica que el listado (GET) siga siendo público mientras que crear/editar/borrar requieran autenticación.</li>
+  <li>Crea un permiso personalizado que restrinja una acción de escritura a un grupo específico de usuarios.</li>
+  <li>Documenta en tu README cómo obtener un token y qué endpoints requieren autenticación.</li>
+</ol>
+
+<div class="section-header">6. Errores comunes</div>
+<table class="simple errores">
+<tr><td class="mark">✗</td><td>Enviar el token sin el prefijo <code>Bearer</code> en el encabezado <code>Authorization</code> → DRF no reconoce el token y responde 401.</td></tr>
+<tr><td class="mark">✗</td><td>Confundir el token <code>access</code> (de corta duración, para autenticar peticiones) con el <code>refresh</code> (para obtener un nuevo access token) y usar el equivocado.</td></tr>
+<tr><td class="mark">✗</td><td>Definir un permiso personalizado y olvidar implementar <code>has_permission</code> (o <code>has_object_permission</code> para permisos a nivel de objeto) → DRF usa el comportamiento por defecto, normalmente permitir todo.</td></tr>
+<tr><td class="mark">✗</td><td>Configurar <code>IsAuthenticated</code> de forma global y olvidar que eso también bloquea la Browsable API para usuarios anónimos durante las pruebas.</td></tr>
+</table>
+
+<div class="section-header">7. Resumen de la sesión (checklist de aprendizaje)</div>
+<table class="simple checklist">
+<tr><td class="mark">☐</td><td>Puedo explicar la diferencia entre autenticación y permisos.</td></tr>
+<tr><td class="mark">☐</td><td>Sé configurar JWT con SimpleJWT y obtener un token.</td></tr>
+<tr><td class="mark">☐</td><td>Sé usar el token en el encabezado <code>Authorization: Bearer</code>.</td></tr>
+<tr><td class="mark">☐</td><td>Sé aplicar clases de permisos estándar (<code>IsAuthenticated</code>, <code>IsAuthenticatedOrReadOnly</code>, <code>IsAdminUser</code>).</td></tr>
+<tr><td class="mark">☐</td><td>Sé crear un permiso personalizado heredando de <code>BasePermission</code>.</td></tr>
+</table>
+
+<div class="footer-note">Próxima sesión (23 de octubre): sesión de repaso y práctica integradora sobre APIView/Generic Views, CRUD completo y Autenticación/permisos.</div>
+
+</body>
+</html>
