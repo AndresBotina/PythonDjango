@@ -10,7 +10,6 @@ from .models import Libro
 @api_view(['GET'])
 def listado_libros(request):
     libros = Libro.objects.all()
-    
     datos = [
         {
             "id": libro.id,
@@ -29,3 +28,4 @@ def inicio(request):
 def resumen(request):
     total = Libro.objects.count()
     return HttpResponse(f"Actualmente hay {total} libros registrados en la biblioteca.")
+    
