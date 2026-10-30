@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'inventario', #Nuestra app
     'rest_framework',
-    'biblioteca'
+    'biblioteca',
+    'colegio'
 ]
 
 MIDDLEWARE = [
