@@ -8,5 +8,6 @@ router.register('libros', views.LibroViewSet, basename='libro')
 
 urlpatterns = [
     path('resumen/', views.resumen, name='resumen'),
+    path('libros/disponibles/',views.LibroDisponibleAPIView.as_view(), name = 'libros_disponibles'),
     path('', include(router.urls)),
 ]
