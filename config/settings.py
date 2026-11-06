@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'inventario', #Nuestra app
     'rest_framework',
     'biblioteca',
-    'colegio'
+    'colegio',
+    'matricula',
 ]
 
 MIDDLEWARE = [
