@@ -175,7 +175,7 @@ hacer_sonar(Robot())
 
 
 # Clases abstractas con abc
-from abc import ABC, abstractmethodD
+from abc import ABC, abstractmethod
 
 
 class Pago(ABC):
